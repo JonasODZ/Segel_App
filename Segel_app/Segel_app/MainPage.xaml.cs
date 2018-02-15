@@ -8,46 +8,46 @@ using Xamarin.Forms;
 
 namespace Segel_app
 {
+
 	public partial class MainPage : ContentPage
 	{
-        
-        
+
+        private double width;
+        private double height;
+        private Grid mainLayout;
+        private Grid innerGrid;
+        private Label titleLabel;
+        private Button userButton;
+        private Button starterButton;
 
 
-		public MainPage()
+        public MainPage()
 		{
             
-            
-
 			InitializeComponent();
 
-
-            var mainLayout = new StackLayout()
+            mainLayout = new Grid();
+            mainLayout.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            mainLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            innerGrid = new Grid();
+                      
+            titleLabel = new Label
             {
-                Padding = new Thickness(5, 50)
-            };
-           
-            var titleLabel = new Label
-            {
-                Margin = new Thickness(5, 0, 5, 30),
                 Text = "Segel Appen",
                 HorizontalTextAlignment = TextAlignment.Center,
                 VerticalTextAlignment = TextAlignment.Center,
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Start,
-                FontSize = 40,                
+                FontSize = 40,
+                FontAttributes = FontAttributes.Bold,
+                
             };
             
-            var userButton = new Button
-            {
-                WidthRequest = 200,
-                HeightRequest = 100,
-                Margin = new Thickness(5, 20, 5, 20),
+            
+            userButton = new Button
+            {                
                 Text = "User",
-                Font = Font.SystemFontOfSize(NamedSize.Large),
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Fill
+                Font = Font.SystemFontOfSize(NamedSize.Large)
             };
+            
             
             userButton.Clicked += OnUserButtonClicked;
 
@@ -56,14 +56,12 @@ namespace Segel_app
                 await Navigation.PushAsync(new UserMain());
             }
 
-            var starterButton = new Button
+            starterButton = new Button
             {
-                Margin = new Thickness(5, 50, 5, 0),
                 Text = "Starter",
                 Font = Font.SystemFontOfSize(NamedSize.Large),
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Fill
             };
+            
             
             starterButton.Clicked += OnStarterButtonClicked;
 
@@ -72,17 +70,56 @@ namespace Segel_app
                 await Navigation.PushAsync(new StarterMain());
             }
 
-            
-            mainLayout.Children.Add(titleLabel);
-            mainLayout.Children.Add(userButton);
-            mainLayout.Children.Add(starterButton);
+            mainLayout.Children.Add(innerGrid);
+            innerGrid.Children.Add(titleLabel);
+            innerGrid.Children.Add(userButton);
+            innerGrid.Children.Add(starterButton);
 
             Content = mainLayout;
             
-
+            
             
             
         }
-        
-	}
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+            if (width != this.width || height != this.height)
+            {
+                this.width = width;
+                this.height = height;
+                if (width > height)
+                {
+                    innerGrid.RowDefinitions.Clear();
+                    innerGrid.ColumnDefinitions.Clear();
+                    innerGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                    innerGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                    innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    innerGrid.Children.Remove(innerGrid);
+                    innerGrid.Children.Add(titleLabel, 0, 0);
+                    Grid.SetColumnSpan(titleLabel, 2);
+                    innerGrid.Children.Add(userButton, 0, 1);
+                    innerGrid.Children.Add(starterButton, 1, 1);
+                }
+                else
+                {
+                    innerGrid.RowDefinitions.Clear();
+                    innerGrid.ColumnDefinitions.Clear();
+                    innerGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                    innerGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                    innerGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                    innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    innerGrid.Children.Remove(innerGrid);
+                    innerGrid.Children.Add(titleLabel, 0, 0);
+                    innerGrid.Children.Add(userButton, 0, 1);
+                    innerGrid.Children.Add(starterButton, 0, 2);
+                    Grid.SetColumnSpan(titleLabel, 2);
+                    Grid.SetColumnSpan(userButton, 2);
+                    Grid.SetColumnSpan(starterButton, 2);
+                }
+            }
+        }
+    }
 }
